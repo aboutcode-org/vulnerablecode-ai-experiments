@@ -35,7 +35,20 @@ To use the `VulnerabilitySummaryParser`, follow these steps:
     ```bash
     print(version_ranges)  # Output: ([affected_versions], [fixed_versions])
     ```
+To use the `CPEParser`, follow these steps:
+1. **Create an instance of the `CPEParser`:**
 
+    ```bash
+    instance = CPEParser()
+    ```
+
+2. **Get the Package URL (PURL) for the given cpe:**
+
+    ```bash
+    purl = instance.get_purl(cpe)
+    ```
+
+    Ensure the `cpe` variable contains the relevant information to extract the PURL.
 ---
 ## Configuration
 
