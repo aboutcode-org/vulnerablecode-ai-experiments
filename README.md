@@ -1,54 +1,51 @@
 # vulnerablecode-ai-experiments
 
-This repository contains experiments with the AI-driven summary parser for analyzing vulnerable code.
+This repository contains experiments with AI-driven parsers for analyzing vulnerabilities, extracting package URLs (PURLs), and determining affected/fixed version ranges.
 
 ## Usage
 
-To use the `VulnerabilitySummaryParser`, follow these steps:
+You can interact with all parsers through the VulnerabilityAgent class, which provides a single entry point for:
 
-1. **Create an instance of the `VulnerabilitySummaryParser`:**
-
+1. **Create an instance of the `VulnerabilityAgent`:**
     ```bash
-    instance = VulnerabilitySummaryParser()
+    instance = VulnerabilityAgent()
     ```
 
 2. **Get the Package URL (PURL) for the given summary:**
-
     ```bash
-    purl = instance.get_purl(summary)
+    purl = instance.get_purl_from_summary(summary)
     ```
-
     Ensure the `summary` variable contains the relevant information to extract the PURL.
 
 3. **Get the version ranges (affected and fixed versions) from the summary:**
-
     ```bash
     version_ranges = instance.get_version_ranges(summary, purl.type)
     ```
-
     This will return a tuple containing two lists:
-    - `affected_versions`: Versions affected by the vulnerability.
-    - `fixed_versions`: Versions where the vulnerability has been fixed.
+    - `affected_versions`: Versions affected by the vulnerability
+    - `fixed_versions`: Versions where the vulnerability has been fixed
 
     Example output:
-
     ```bash
     print(version_ranges)  # Output: ([affected_versions], [fixed_versions])
     ```
-To use the `CPEParser`, follow these steps:
-1. **Create an instance of the `CPEParser`:**
 
+## Parsing a CPE
+
+1. Create an instance of the VulnerabilityAgent:
     ```bash
-    instance = CPEParser()
+    instance = VulnerabilityAgent()
     ```
 
 2. **Get the Package URL (PURL) for the given cpe:**
-
     ```bash
-    purl = instance.get_purl(cpe)
+    cpe = "cpe:2.3:a:django-helpdesk_project:django-helpdesk:-:*:*:*:*:*:*:*"
+    pkg_type = "pypi"
+    purl = instance.get_purl_from_cpe(cpe, pkg_type)
+    print(purl)  # Output: pkg:pypi/django-helpdesk
     ```
-
     Ensure the `cpe` variable contains the relevant information to extract the PURL.
+
 ---
 ## Configuration
 

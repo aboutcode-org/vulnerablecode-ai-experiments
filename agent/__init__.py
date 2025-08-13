@@ -8,17 +8,23 @@
 #
 
 import os
-from typing import List
+from typing import List, Optional
+
+from dotenv import load_dotenv
+from packageurl import PackageURL
 from pydantic import BaseModel
+from pydantic.functional_validators import field_validator
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from univers.version_range import RANGE_CLASS_BY_SCHEMES
 
-from packageurl import PackageURL
-from pydantic.functional_validators import field_validator
-from dotenv import load_dotenv
+from prompts import (
+    PROMPT_PURL_FROM_CPE,
+    PROMPT_PURL_FROM_SUMMARY,
+    PROMPT_VERSION_FROM_SUMMARY,
+)
 
 load_dotenv()
 
@@ -27,10 +33,11 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME")
 
+
 class Purl(BaseModel):
     string: str
 
-    @field_validator('string')
+    @field_validator("string")
     def check_valid_purl(cls, v: str) -> str:
         try:
             PackageURL.from_string(v)
@@ -38,162 +45,94 @@ class Purl(BaseModel):
             raise ValueError(f"Invalid PURL '{v}': {e}")
         return v
 
+
 class Versions(BaseModel):
     affected_versions: List[str]
-    fixed_versions:   List[str]
+    fixed_versions: List[str]
 
 
-prompt_purl_from_summary = f"""
-You are a highly specialized Vulnerability Analysis Assistant. Your task is to analyze the provided vulnerability summary or package name and extract a single valid Package URL (PURL) that conforms to the official PURL specification:
+class BaseParser:
+    def __init__(self, system_prompt: str, output_type):
+        self.model = self._init_model()
+        self.agent = Agent(
+            self.model,
+            system_prompt=system_prompt,
+            model_settings=ModelSettings(temperature=0, seed=42),
+            output_type=output_type,
+        )
 
-**Component Definitions (Required by PURL Specification):**
-- **scheme**: Constant value `pkg`
-- **type**: Package type or protocol (e.g., maven, npm, nuget, gem, pypi, rpm, etc.) — must be a known valid type
-- **namespace**: A name prefix such as a Maven groupId, Docker image owner, or GitHub user/org (optional and type-specific)
-- **name**: Package name (required)
-- **version**: Version of the package (optional)
-- **qualifiers**: Extra data like OS, arch, etc. (optional and type-specific)
-- **subpath**: Subpath within the package (optional)
-
-**Output Instructions:**
-- Identify the most appropriate and valid PURL type for the package if possible.
-- If a valid and complete PURL can be constructed, return only:
-  `{{ "string": "pkg:type/namespace/name@version?qualifiers#subpath" }}`
-- If no valid PURL can be constructed or the type is unknown, return:
-  `{{}}`
-- Do not include any other output (no explanation, formatting, or markdown).
-
-please don't Hallucinate
-"""
-
-prompt_version_from_summary = f"""
-        You are a highly specialized Vulnerability Analysis Assistant. Your task is to analyze the following vulnerability summary and accurately extract the affected and fixed versions of the software.
-        
-        Instructions:
-        - Affected Version: Use one of the following formats:
-          - >= <version>, <= <version>, > <version>, < <version>
-          - A specific range like <version1> - <version2>
-        - Fixed Version: Use one of the following formats:
-          - >= <version>, <= <version>, > <version>, < <version>
-          - "Not Fixed" if no fixed version is mentioned.
-        - Ensure accuracy by considering different ways affected and fixed versions might be described in the summary.
-        - Extract only version-related details without adding any extra information.
-        
-        Output Format:
-        ```json
-        {{
-            "affected_versions": ["<version_condition>", "<version_condition>"],
-            "fixed_versions": ["<version_condition>", "<version_condition>"]
-        }}
-        ```
-        Example:
-        {{
-            "affected_versions": [">=1.2.3", "<2.0.0"],
-            "fixed_versions": ["2.0.0"]
-        }}
-        
-        Return only the JSON object without any additional text.
-        """
-
-prompt_purl_from_cpe = f"""
-You are a specialized Vulnerability Analysis Assistant. Your task is to analyze the provided vulnerability CPE or Known Affected Software Configurations and extract a single, valid Package URL (PURL) that strictly conforms to the official PURL specification.
-
-**PURL Format:**  
-pkg:type/namespace/name@version
-
-- **type**: The package type (e.g., maven, npm, pypi, gem, nuget, rpm, deb, docker, etc.)
-- **namespace**: The namespace, organization, or group (optional, use only if present and verifiable)
-- **name**: The package name
-- **version**: The package version (if available)
-
-**Instructions:**
-- Use only verifiable, extractable data from the CPE or software configuration input.
-- Construct the most accurate PURL string based on the input.
-- The PURL must be syntactically valid and follow the required format.
-- Output only:
-  {{ "string": "pkg:type/namespace/name@version" }}
-- If a valid PURL cannot be reliably generated, output: {{}}
-- Do not provide explanations, additional text, or markdown formatting.
-- Do not assume or hallucinate any values.
-
-"""
-
-
-class VulnerabilitySummaryParser:
-    def __init__(self):
+    @staticmethod
+    def _init_model():
+        """Initialize the LLM model depending on environment variables."""
         if OLLAMA_MODEL_NAME and OLLAMA_BASE_URL:
-            self.model = OpenAIModel(
+            return OpenAIModel(
                 model_name=OLLAMA_MODEL_NAME,
-                provider=OpenAIProvider(openai_client=OLLAMA_BASE_URL)
+                provider=OpenAIProvider(openai_client=OLLAMA_BASE_URL),
             )
-        else:
-            self.model = OpenAIModel(
-                model_name=OPENAI_MODEL_NAME,
-                provider=OpenAIProvider(api_key=OPENAI_API_KEY),
-            )
+        return OpenAIModel(
+            model_name=OPENAI_MODEL_NAME,
+            provider=OpenAIProvider(api_key=OPENAI_API_KEY),
+        )
 
-        self.purl_agent = Agent(self.model,
-                           system_prompt=prompt_purl_from_summary,
-                           model_settings=ModelSettings(temperature=0, seed=42),
-                           output_type=Purl)
-
-        self.versions_agent = Agent(self.model,
-                               system_prompt=prompt_version_from_summary,
-                               model_settings=ModelSettings(temperature=0, seed=42),
-                               output_type=Versions)
-
-    def get_version_ranges(self, summary, supported_ecosystem):
-        """Extract affected and fixed version ranges from a vulnerability summary."""
-        result = self.versions_agent.run_sync(user_prompt=f"""
-        **Vulnerability Summary:**
-        {summary}
-        """)
-
-        affected_version_ranges = result.output.affected_versions
-        fixed_version_ranges = result.output.fixed_versions
-
-        affected_version_objs = [RANGE_CLASS_BY_SCHEMES[supported_ecosystem].from_string(f"vers:{supported_ecosystem}/" + affected_version_range) for affected_version_range in affected_version_ranges]
-        fixed_version_objs = [RANGE_CLASS_BY_SCHEMES[supported_ecosystem].from_string(f"vers:{supported_ecosystem}/" + fixed_version_version_range) for fixed_version_version_range in fixed_version_ranges]
-        return affected_version_objs, fixed_version_objs
+    def run_agent(self, user_prompt: str):
+        """Run the agent synchronously."""
+        return self.agent.run_sync(user_prompt=user_prompt)
 
 
-    def get_purl(self, summary):
-        """
-        Analyze the vulnerability summary and extract a valid Package URL (PURL).
-        Returns the extracted PURL string or None if not found.
-        """
-        result = self.purl_agent.run_sync(user_prompt=f"""
-        **Vulnerability Summary:**
-        {summary}
-        """)
+class PurlFromSummaryParser(BaseParser):
+    def __init__(self):
+        super().__init__(PROMPT_PURL_FROM_SUMMARY, Purl)
+
+    def get_purl(self, summary: str) -> Optional[PackageURL]:
+        result = self.run_agent(f"**Vulnerability Summary:**\n{summary}")
         return PackageURL.from_string(result.output.string)
 
 
-class CPEParser:
+class VersionsFromSummaryParser(BaseParser):
     def __init__(self):
-        if OLLAMA_MODEL_NAME and OLLAMA_BASE_URL:
-            self.model = OpenAIModel(
-                model_name=OLLAMA_MODEL_NAME,
-                provider=OpenAIProvider(openai_client=OLLAMA_BASE_URL)
-            )
-        else:
-            self.model = OpenAIModel(
-                model_name=OPENAI_MODEL_NAME,
-                provider=OpenAIProvider(api_key=OPENAI_API_KEY),
-            )
+        super().__init__(PROMPT_VERSION_FROM_SUMMARY, Versions)
 
-        self.purl_agent = Agent(self.model,
-                           system_prompt=prompt_purl_from_cpe,
-                           model_settings=ModelSettings(temperature=0, seed=42),
-                           output_type=Purl)
+    def get_version_ranges(self, summary: str, supported_ecosystem: str):
+        result = self.run_agent(f"**Vulnerability Summary:**\n{summary}")
+        affected_objs = [
+            RANGE_CLASS_BY_SCHEMES[supported_ecosystem].from_string(
+                f"vers:{supported_ecosystem}/{v}"
+            )
+            for v in result.output.affected_versions
+        ]
+        fixed_objs = [
+            RANGE_CLASS_BY_SCHEMES[supported_ecosystem].from_string(
+                f"vers:{supported_ecosystem}/{v}"
+            )
+            for v in result.output.fixed_versions
+        ]
+        return affected_objs, fixed_objs
 
-    def get_purl(self, cpe):
-        """
-        Analyze the vulnerability summary and extract a valid Package URL (PURL).
-        Returns the extracted PURL string or None if not found.
-        """
-        result = self.purl_agent.run_sync(user_prompt=f"""
-        **Vulnerability Known Affected Software Configurations CPE:**
-        {cpe}
-        """)
+
+class PurlFromCPEParser(BaseParser):
+    def __init__(self):
+        super().__init__(PROMPT_PURL_FROM_CPE, Purl)
+
+    def get_purl(self, cpe: str, pkg_type) -> Optional[PackageURL]:
+        result = self.run_agent(
+            f"**Vulnerability Known Affected Software Configurations CPE:**\n{cpe}\n **Package Type:**\n{pkg_type}"
+        )
         return PackageURL.from_string(result.output.string)
+
+
+class VulnerabilityAgent:
+    """Facade for all vulnerability parsing tasks."""
+
+    def __init__(self):
+        self.purl_parser = PurlFromSummaryParser()
+        self.versions_parser = VersionsFromSummaryParser()
+        self.cpe_parser = PurlFromCPEParser()
+
+    def get_purl_from_summary(self, summary: str):
+        return self.purl_parser.get_purl(summary)
+
+    def get_version_ranges(self, summary: str, ecosystem: str):
+        return self.versions_parser.get_version_ranges(summary, ecosystem)
+
+    def get_purl_from_cpe(self, cpe: str, purl_with_no_version: str):
+        return self.cpe_parser.get_purl(cpe, purl_with_no_version)
