@@ -10,6 +10,7 @@
 import os
 from typing import List, Optional
 
+from aboutcode.hashid import get_core_purl
 from dotenv import load_dotenv
 from packageurl import PackageURL
 from pydantic import BaseModel
@@ -57,7 +58,7 @@ class BaseParser:
         self.agent = Agent(
             self.model,
             system_prompt=system_prompt,
-            model_settings=ModelSettings(temperature=0, seed=42),
+            model_settings=ModelSettings(temperature=0, seed=1223372036854775807),
             output_type=output_type,
         )
 
@@ -85,7 +86,8 @@ class PurlFromSummaryParser(BaseParser):
 
     def get_purl(self, summary: str) -> Optional[PackageURL]:
         result = self.run_agent(f"**Vulnerability Summary:**\n{summary}")
-        return PackageURL.from_string(result.output.string)
+        purl = PackageURL.from_string(result.output.string)
+        return get_core_purl(purl)
 
 
 class VersionsFromSummaryParser(BaseParser):
@@ -117,7 +119,8 @@ class PurlFromCPEParser(BaseParser):
         result = self.run_agent(
             f"**Vulnerability Known Affected Software Configurations CPE:**\n{cpe}\n **Package Type:**\n{pkg_type}"
         )
-        return PackageURL.from_string(result.output.string)
+        purl = PackageURL.from_string(result.output.string)
+        return get_core_purl(purl)
 
 
 class VulnerabilityAgent:

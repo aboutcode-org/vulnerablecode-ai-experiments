@@ -13,7 +13,7 @@ You can interact with all parsers through the VulnerabilityAgent class, which pr
 
 2. **Get the Package URL (PURL) for the given summary:**
     ```bash
-    purl = instance.get_purl_from_summary(summary)
+    purl = instance.get_purl_from_summary(summary) # Output: pkg:pypi/django-helpdesk
     ```
     Ensure the `summary` variable contains the relevant information to extract the PURL.
 

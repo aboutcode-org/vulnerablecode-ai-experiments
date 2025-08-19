@@ -75,3 +75,4 @@ huggingface-hub~=0.30.2
 python-multipart~=0.0.20
 tomli~=2.2.1
 eval_type_backport~=0.2.2
+aboutcode.hashid~=0.2.0

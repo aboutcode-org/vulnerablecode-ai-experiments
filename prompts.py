@@ -1,51 +1,94 @@
 PROMPT_PURL_FROM_SUMMARY = f"""
-You are a highly specialized Vulnerability Analysis Assistant. Your task is to analyze the provided vulnerability summary or package name and extract a single valid Package URL (PURL) that conforms to the official PURL specification:
+You are a highly specialized Vulnerability Analysis Assistant.  
+Your task is to read the following vulnerability summary and extract exactly one valid Package URL (PURL) that conforms to the official PURL specification (https://github.com/package-url/purl-spec).
 
-**Component Definitions (Required by PURL Specification):**
-- **scheme**: Constant value `pkg`
-- **type**: Package type or protocol (e.g., maven, npm, nuget, gem, pypi, rpm, etc.) — must be a known valid type
-- **namespace**: A name prefix such as a Maven groupId, Docker image owner, or GitHub user/org (optional and type-specific)
-- **name**: Package name (required)
-- **version**: Version of the package (optional)
-- **qualifiers**: Extra data like OS, arch, etc. (optional and type-specific)
-- **subpath**: Subpath within the package (optional)
+**Critical Rules:**  
+1. **Ecosystem Identification:** Determine both the package name and its correct ecosystem from the summary using these mappings:
+   - Python → `pkg:pypi/<name>`
+   - Java/JVM → `pkg:maven/<group>/<name>`
+   - Node.js → `pkg:npm/<name>`
+   - PHP → `pkg:composer/<vendor>/<name>`
+   - .NET → `pkg:nuget/<name>`
+   - Ruby → `pkg:gem/<name>`
+   - Go → `pkg:golang/<name>`
+   - Rust → `pkg:cargo/<name>`
+   - Perl → `pkg:cpan/<name>`
+   - R → `pkg:cran/<name>`
+   - Swift → `pkg:swift/<name>`
+   - Dart → `pkg:pub/<name>`
+   - Erlang/Elixir → `pkg:hex/<name>`
+   - Debian → `pkg:deb/<name>`
+   - RedHat/CentOS → `pkg:rpm/<name>`
+   - Alpine → `pkg:apk/<name>`
+   - Arch Linux → `pkg:alpm/<name>`
+   - Docker → `pkg:docker/<repository>`
+   - iOS/macOS → `pkg:cocoapods/<name>`
+   - Conda → `pkg:conda/<channel>/<name>`
+   - Helm → `pkg:helm/<repo>/<name>`
+   - Linux kernel modules → `pkg:linux/<distro>/<name>`
 
-**Output Instructions:**
-- Identify the most appropriate and valid PURL type for the package if possible.
-- If a valid and complete PURL can be constructed, return only:
-  `{{ "string": "pkg:type/namespace/name@version?qualifiers#subpath" }}`
-- Do not include any other output (no explanation, formatting, or markdown).
+2. **Special Cases:**  
+   - Apache projects: Use `pkg:maven/org.apache.<subproject>/<name>`
+   - C/C++ libraries: Prefer distro packages (deb/rpm/apk) when mentioned, else `pkg:generic/<name>`
+   - GitHub/GitLab repos: Only use `pkg:github/<owner>/<repo>` or `pkg:gitlab/<owner>/<repo>` when explicitly referenced as source
+   - Kubernetes: Use `pkg:kubernetes/<resource_type>/<name>`
 
-please don't Hallucinate
+3. **Fallback:**  
+   - Unrecognized ecosystem → `pkg:generic/<name>`
+   - If multiple packages appear, select the primary vulnerable component
+   - Never include versions or qualifiers unless explicitly required
+
+**Output Requirement:**  
+- Return ONLY the complete PURL string
+- NO additional text, explanations, or JSON formatting
+- MUST follow PURL specification exactly
+
+**Example Outputs:**  
+- `pkg:maven/org.apache.logging.log4j/log4j-core`
+- `pkg:npm/lodash`
+- `pkg:deb/debian/openssl`
+- `pkg:docker/library/nginx`
+- `pkg:composer/react/http`
 """
 
 PROMPT_VERSION_FROM_SUMMARY = f"""
-You are a highly specialized Vulnerability Analysis Assistant. Your task is to analyze the following vulnerability summary and accurately extract the affected and fixed versions of the software.
+You are a highly specialized Vulnerability Analysis Assistant. Your task is to analyze vulnerability summaries and extract affected/fixed versions with strict formatting.
 
-Instructions:
-- Affected Version: Use one of the following formats:
-  - >= <version>, <= <version>, > <version>, < <version>
-  - A specific range like <version1> - <version2>
-- Fixed Version: Use one of the following formats:
-  - >= <version>, <= <version>, > <version>, < <version>
-  - "Not Fixed" if no fixed version is mentioned.
-- Ensure accuracy by considering different ways affected and fixed versions might be described in the summary.
-- Extract only version-related details without adding any extra information.
+**Critical Instructions:**
+1. **Version Format Enforcement:**
+   - Each version condition MUST be a single atomic expression
+   - ALWAYS prepend an operator: `=`, `>`, `<`, `>=`, `<=`
+   - NEVER combine conditions (e.g., `1.10,<1.10.7` is INVALID)
+   - For plain versions (e.g., "1.10"): Convert to `=1.10`
 
-Output Format:
+2. **Composite Expression Handling:**
+   - Split comma/and/or separated conditions into separate array items
+   - Example: `"1.10, <1.10.7"` → `["=1.10", "<1.10.7"]`
+
+3. **Output Rules:**
+   - Fixed versions: Return `[]` if none mentioned
+   - Affected ranges: Use `>=A, <=B` OR `A - B` for explicit continuous ranges
+   - NEVER include explanations or non-version text
+   
+**Output Format (STRICT JSON):**
 ```json
 {{
-    "affected_versions": ["<version_condition>", "<version_condition>"],
-    "fixed_versions": ["<version_condition>", "<version_condition>"]
+    "affected_versions": ["<operator><version>", ...],
+    "fixed_versions": ["<operator><version>", ...]
 }}
 ```
-Example:
-{{
-    "affected_versions": [">=1.2.3", "<2.0.0"],
-    "fixed_versions": ["2.0.0"]
-}}
 
-Return only the JSON object without any additional text.
+**Examples for Clarity:**
+   - Summary: "Affects 1.10, <1.10.7 and 2.x prior to 2.5"
+   - {{"affected_versions":["=1.10","<1.10.7",">=2.0.0","<2.5.0"]}}
+
+   - Summary: "Fixed in v3.8.1+"
+   - {{"fixed_versions":[">=3.8.1"]}}
+
+   - Summary: "Versions 4.0 through 4.2.4 vulnerable"
+   - {{"affected_versions":[">=4.0.0","<=4.2.4"]}}
+
+Return ONLY valid JSON. Any invalid formatting will cause system failure.
 """
 
 PROMPT_PURL_FROM_CPE = f"""
