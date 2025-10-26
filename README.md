@@ -47,22 +47,17 @@ You can interact with all parsers through the VulnerabilityAgent class, which pr
     Ensure the `cpe` variable contains the relevant information to extract the PURL.
 
 ---
-## Configuration
 
-To configure the model source, set the appropriate environment variables. You can choose between using a local LLM model or the OpenAI API.
+### LLM Configuration:
 
-### Local LLM Model Configuration:
+To setup your LLM model, configure the following environment variables:
+```
+OPENAI_API_KEY="your-open-ai-api-key"
+OPENAI_API_BASE="your-open-ai-api-base"
+OPENAI_MODEL_NAME="your-open-ai-api-model-name"
+OPENAI_TEMPERATURE=your-model-temperature # must be a float value between 0 and 1
+```
 
-If you want to use a local LLM model, set the `USE_LOCAL_LLM_MODEL` environment variable to `True`, and provide the necessary details for the local model:
+> **NOTE**: The following variables can be configured with the credentials of any OpenAI compatible API (OpenAI, Ollama, lm-studio, openrouter, etc).
 
-1. Set the following environment variables:
-    - `OLLAMA_MODEL_NAME="your_model_name"`
-    - `OLLAMA_BASE_URL="http://your_local_model_url"`
-
-### OpenAI API Configuration:
-
-If you prefer to use OpenAI's API, simply set the `OPENAI_API_KEY` environment variable:
-
-1. Set the following environment variable:
-    - `OPENAI_API_KEY="your_openai_api_key"`
-    - `OPENAI_MODEL_NAME="gpt-4o-mini"`
+The above values can either be set in your environment variables, or in a `.env` file at the root of this project. To create a `.env` file, simply clone the `.env.sample` file and update the values.
