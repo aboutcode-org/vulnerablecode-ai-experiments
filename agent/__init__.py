@@ -32,6 +32,7 @@ OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME")
 OPENAI_TEMPERATURE = os.getenv("OPENAI_TEMPERATURE", 0.3)
+OPENAI_MODEL_SEED = os.getenv("OPENAI_MODEL_SEED", 11111111)
 
 
 class Purl(BaseModel):
@@ -57,7 +58,7 @@ class BaseParser:
         self.agent = Agent(
             self.model,
             system_prompt=system_prompt,
-            model_settings=OpenAIChatModelSettings(temperature=OPENAI_TEMPERATURE, seed=1223372036854775807),
+            model_settings=OpenAIChatModelSettings(temperature=OPENAI_TEMPERATURE, seed=OPENAI_MODEL_SEED),
             output_type=output_type,
         )
 
