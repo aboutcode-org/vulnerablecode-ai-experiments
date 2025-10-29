@@ -16,9 +16,8 @@ from packageurl import PackageURL
 from pydantic import BaseModel
 from pydantic.functional_validators import field_validator
 from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.openai import OpenAIChatModel, OpenAIChatModelSettings
 from pydantic_ai.providers.openai import OpenAIProvider
-from pydantic_ai.settings import ModelSettings
 from univers.version_range import RANGE_CLASS_BY_SCHEMES
 
 from prompts import (
@@ -29,10 +28,11 @@ from prompts import (
 
 load_dotenv()
 
-OLLAMA_MODEL_NAME = os.getenv("OLLAMA_MODEL_NAME")
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
+OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME")
+OPENAI_TEMPERATURE = os.getenv("OPENAI_TEMPERATURE", 0.3)
+OPENAI_MODEL_SEED = os.getenv("OPENAI_MODEL_SEED", 11111111)
 
 
 class Purl(BaseModel):
@@ -58,21 +58,16 @@ class BaseParser:
         self.agent = Agent(
             self.model,
             system_prompt=system_prompt,
-            model_settings=ModelSettings(temperature=0, seed=1223372036854775807),
+            model_settings=OpenAIChatModelSettings(temperature=OPENAI_TEMPERATURE, seed=OPENAI_MODEL_SEED),
             output_type=output_type,
         )
 
     @staticmethod
     def _init_model():
         """Initialize the LLM model depending on environment variables."""
-        if OLLAMA_MODEL_NAME and OLLAMA_BASE_URL:
-            return OpenAIModel(
-                model_name=OLLAMA_MODEL_NAME,
-                provider=OpenAIProvider(openai_client=OLLAMA_BASE_URL),
-            )
-        return OpenAIModel(
+        return OpenAIChatModel(
             model_name=OPENAI_MODEL_NAME,
-            provider=OpenAIProvider(api_key=OPENAI_API_KEY),
+            provider=OpenAIProvider(base_url=OPENAI_API_BASE, api_key=OPENAI_API_KEY),
         )
 
     def run_agent(self, user_prompt: str):
