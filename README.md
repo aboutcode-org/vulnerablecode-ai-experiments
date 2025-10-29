@@ -56,6 +56,9 @@ OPENAI_API_KEY="your-open-ai-api-key"
 OPENAI_API_BASE="your-open-ai-api-base"
 OPENAI_MODEL_NAME="your-open-ai-api-model-name"
 OPENAI_TEMPERATURE=your-model-temperature # must be a float value between 0 and 1
+
+# optionally, you can also set a seed to produce more reproducable outputs
+OPENAI_MODEL_SEED=1223372036854775807
 ```
 
 > **NOTE**: The following variables can be configured with the credentials of any OpenAI compatible API (OpenAI, Ollama, lm-studio, openrouter, etc).
