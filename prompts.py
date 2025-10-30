@@ -113,3 +113,19 @@ pkg:type/namespace/name
 - Do not assume or hallucinate any values.
 
 """
+
+PROMPT_SEVERITY_FROM_SUMMARY = """You are a cybersecurity expert. Based on the following vulnerability description, determine its severity level as one of: Low, Medium, High, or Critical. 
+
+Consider the impact on confidentiality, integrity, availability, and whether user interaction is required. 
+
+Return **only** the severity level (Low, Medium, High, or Critical).
+"""
+
+PROMPT_CWE_FROM_SUMMARY = """You are a Vulnerability Management Expert. 
+Based on the following vulnerability description, identify all relevant CWE (Common Weakness Enumeration) IDs that categorize the underlying weaknesses.
+
+Use only valid CWE entries from the official MITRE CWE list (https://cwe.mitre.org/), such as CWE-79, CWE-89, CWE-287, etc.
+
+Return **CWE IDs**, for example:
+["CWE-79", "CWE-89"]
+"""
