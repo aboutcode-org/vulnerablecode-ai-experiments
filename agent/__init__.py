@@ -8,22 +8,26 @@
 #
 
 import os
+from enum import Enum
 from typing import List, Optional
 
 from aboutcode.hashid import get_core_purl
+from cwe2.database import Database
 from dotenv import load_dotenv
 from packageurl import PackageURL
 from pydantic import BaseModel
 from pydantic.functional_validators import field_validator
 from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from univers.version_range import RANGE_CLASS_BY_SCHEMES
 
 from prompts import (
+    PROMPT_CWE_FROM_SUMMARY,
     PROMPT_PURL_FROM_CPE,
     PROMPT_PURL_FROM_SUMMARY,
+    PROMPT_SEVERITY_FROM_SUMMARY,
     PROMPT_VERSION_FROM_SUMMARY,
 )
 
@@ -39,12 +43,45 @@ class Purl(BaseModel):
     string: str
 
     @field_validator("string")
-    def check_valid_purl(cls, v: str) -> str:
-        try:
-            PackageURL.from_string(v)
-        except Exception as e:
-            raise ValueError(f"Invalid PURL '{v}': {e}")
-        return v
+    def check_valid_purl(cls, purl: str) -> str:
+        PackageURL.from_string(purl)
+        return purl
+
+
+CWE_DATABASE = Database()
+
+
+class CWE(BaseModel):
+    string: str
+
+    @field_validator("string")
+    @classmethod
+    def check_valid_cwe(cls, v: str) -> str:
+        norm = v.strip().upper()
+        if norm.startswith("CWE-"):
+            norm = norm[4:].strip()
+
+        if not norm.isdigit():
+            raise ValueError("CWE must be a numeric identifier, e.g., 'CWE-79' or '79'")
+
+        CWE_DATABASE.get(norm)
+
+        return f"CWE-{norm}"
+
+
+class CWEList(BaseModel):
+    cwes: List[CWE]
+
+
+class SeverityEnum(str, Enum):
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
+
+
+class Severity(BaseModel):
+    severity: SeverityEnum
 
 
 class Versions(BaseModel):
@@ -65,12 +102,7 @@ class BaseParser:
     @staticmethod
     def _init_model():
         """Initialize the LLM model depending on environment variables."""
-        if OLLAMA_MODEL_NAME and OLLAMA_BASE_URL:
-            return OpenAIModel(
-                model_name=OLLAMA_MODEL_NAME,
-                provider=OpenAIProvider(openai_client=OLLAMA_BASE_URL),
-            )
-        return OpenAIModel(
+        return OpenAIChatModel(
             model_name=OPENAI_MODEL_NAME,
             provider=OpenAIProvider(api_key=OPENAI_API_KEY),
         )
@@ -86,6 +118,18 @@ class PurlFromSummaryParser(BaseParser):
 
     def get_purl(self, summary: str) -> Optional[PackageURL]:
         result = self.run_agent(f"**Vulnerability Summary:**\n{summary}")
+        purl = PackageURL.from_string(result.output.string)
+        return get_core_purl(purl)
+
+
+class PurlFromCPEParser(BaseParser):
+    def __init__(self):
+        super().__init__(PROMPT_PURL_FROM_CPE, Purl)
+
+    def get_purl(self, cpe: str, pkg_type) -> Optional[PackageURL]:
+        result = self.run_agent(
+            f"**Vulnerability Known Affected Software Configurations CPE:**\n{cpe}\n **Package Type:**\n{pkg_type}"
+        )
         purl = PackageURL.from_string(result.output.string)
         return get_core_purl(purl)
 
@@ -111,16 +155,22 @@ class VersionsFromSummaryParser(BaseParser):
         return affected_objs, fixed_objs
 
 
-class PurlFromCPEParser(BaseParser):
+class SeverityFromSummaryParser(BaseParser):
     def __init__(self):
-        super().__init__(PROMPT_PURL_FROM_CPE, Purl)
+        super().__init__(PROMPT_SEVERITY_FROM_SUMMARY, Severity)
 
-    def get_purl(self, cpe: str, pkg_type) -> Optional[PackageURL]:
-        result = self.run_agent(
-            f"**Vulnerability Known Affected Software Configurations CPE:**\n{cpe}\n **Package Type:**\n{pkg_type}"
-        )
-        purl = PackageURL.from_string(result.output.string)
-        return get_core_purl(purl)
+    def get_severity(self, summary: str) -> Optional[Severity]:
+        result = self.run_agent(f"**Vulnerability Description:**\n{summary}")
+        return result.output.severity.value
+
+
+class CWEFromSummaryParser(BaseParser):
+    def __init__(self):
+        super().__init__(PROMPT_CWE_FROM_SUMMARY, CWEList)
+
+    def get_cwes(self, summary: str) -> List[CWEList]:
+        result = self.run_agent(f"**Vulnerability Description:**\n{summary}")
+        return [cwe.string for cwe in result.output.cwes]
 
 
 class VulnerabilityAgent:
@@ -130,6 +180,8 @@ class VulnerabilityAgent:
         self.purl_parser = PurlFromSummaryParser()
         self.versions_parser = VersionsFromSummaryParser()
         self.cpe_parser = PurlFromCPEParser()
+        self.severity_parser = SeverityFromSummaryParser()
+        self.cwe_parser = CWEFromSummaryParser()
 
     def get_purl_from_summary(self, summary: str):
         return self.purl_parser.get_purl(summary)
@@ -137,5 +189,11 @@ class VulnerabilityAgent:
     def get_version_ranges(self, summary: str, ecosystem: str):
         return self.versions_parser.get_version_ranges(summary, ecosystem)
 
-    def get_purl_from_cpe(self, cpe: str, purl_with_no_version: str):
-        return self.cpe_parser.get_purl(cpe, purl_with_no_version)
+    def get_purl_from_cpe(self, cpe: str, pkg_type: str):
+        return self.cpe_parser.get_purl(cpe, pkg_type)
+
+    def get_severity_from_summary(self, summary: str):
+        return self.severity_parser.get_severity(summary)
+
+    def get_cwe_from_summary(self, summary: str):
+        return self.cwe_parser.get_cwes(summary)
