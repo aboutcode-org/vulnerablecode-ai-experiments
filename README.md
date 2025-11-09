@@ -4,20 +4,22 @@ This repository contains experiments with AI-driven parsers for analyzing vulner
 
 ## Usage
 
-You can interact with all parsers through the VulnerabilityAgent class, which provides a single entry point for:
+All parsers can be accessed through the `VulnerabilityAgent` class, which provides a unified interface for extracting structured vulnerability data.
 
-1. **Create an instance of the `VulnerabilityAgent`:**
+**Create an instance of the `VulnerabilityAgent`:**
     ```bash
     instance = VulnerabilityAgent()
     ```
 
-2. **Get the Package URL (PURL) for the given summary:**
+## Parsing a PackageURL
+
+**Get the Package URL (PURL) from a summary**
     ```bash
     purl = instance.get_purl_from_summary(summary) # Output: pkg:pypi/django-helpdesk
     ```
-    Ensure the `summary` variable contains the relevant information to extract the PURL.
+    Ensure that the summary variable contains enough information to extract the PURL.
 
-3. **Get the version ranges (affected and fixed versions) from the summary:**
+**Get affected and fixed version ranges**
     ```bash
     version_ranges = instance.get_version_ranges(summary, purl.type)
     ```
@@ -27,17 +29,12 @@ You can interact with all parsers through the VulnerabilityAgent class, which pr
 
     Example output:
     ```bash
-    print(version_ranges)  # Output: ([affected_versions], [fixed_versions])
+    print(version_ranges)  # Output: ([affected_version_range], [fixed_version_range]])
     ```
 
 ## Parsing a CPE
 
-1. Create an instance of the VulnerabilityAgent:
-    ```bash
-    instance = VulnerabilityAgent()
-    ```
-
-2. **Get the Package URL (PURL) for the given cpe:**
+**Get the Package URL (PURL) for the given cpe:**
     ```bash
     cpe = "cpe:2.3:a:django-helpdesk_project:django-helpdesk:-:*:*:*:*:*:*:*"
     pkg_type = "pypi"
@@ -46,6 +43,24 @@ You can interact with all parsers through the VulnerabilityAgent class, which pr
     ```
     Ensure the `cpe` variable contains the relevant information to extract the PURL.
 
+## Parsing a Vulnerability
+
+**Get the Severity for the given summary:**
+    ```bash
+    summary = "..."
+    severity = instance.get_severity_from_summary(summary)
+    print(severity)  # low , medium, high , critical 
+    ```
+    Ensure the `cpe` variable contains the relevant information to extract the PURL.
+
+**Get the CWE for the given summary:**
+    ```bash
+    summary = "Deserialization of untrusted data in Microsoft Office SharePoint allows an authorized attacker to execute code over a network."
+    cwes = instance.get_cwe_from_summary(summary)
+    print(cwes)  # Output: CWE-502
+    ```
+    Ensure the `cpe` variable contains the relevant information to extract the PURL.
+ 
 ---
 
 ### LLM Configuration:
