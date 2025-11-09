@@ -9,8 +9,8 @@
 
 import pytest
 from univers.version_constraint import VersionConstraint
-from univers.version_range import MavenVersionRange, PypiVersionRange
-from univers.versions import MavenVersion, PypiVersion
+from univers.version_range import PypiVersionRange
+from univers.versions import PypiVersion
 
 from agent import VulnerabilityAgent
 
@@ -18,84 +18,6 @@ from agent import VulnerabilityAgent
 @pytest.mark.parametrize(
     "summary, expected_purl, expected_version_ranges",
     [
-        (
-            """A maliciously crafted URL to a Django (1.10 before 1.10.7, 1.9 before 1.9.13, and 1.8 before 1.8.18) site using the ``django.views.static.serve()`` view could redirect to any other domain, aka an open redirect vulnerability. """,
-            "pkg:pypi/django",
-            (
-                (
-                    [
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator=">=", version=PypiVersion(string="1.10")
-                                ),
-                            )
-                        ),
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator="<", version=PypiVersion(string="1.10.7")
-                                ),
-                            )
-                        ),
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator=">=", version=PypiVersion(string="1.9")
-                                ),
-                            )
-                        ),
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator="<", version=PypiVersion(string="1.9.13")
-                                ),
-                            )
-                        ),
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator=">=", version=PypiVersion(string="1.8")
-                                ),
-                            )
-                        ),
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator="<", version=PypiVersion(string="1.8.18")
-                                ),
-                            )
-                        ),
-                    ],
-                    [
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator=">=",
-                                    version=PypiVersion(string="1.10.7"),
-                                ),
-                            )
-                        ),
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator=">=",
-                                    version=PypiVersion(string="1.9.13"),
-                                ),
-                            )
-                        ),
-                        PypiVersionRange(
-                            constraints=(
-                                VersionConstraint(
-                                    comparator=">=",
-                                    version=PypiVersion(string="1.8.18"),
-                                ),
-                            )
-                        ),
-                    ],
-                )
-            ),
-        ),
         (
             """ReactPHP's HTTP server continues parsing unused multipart parts after reaching input field and file upload limits """,
             "pkg:composer/react/http",

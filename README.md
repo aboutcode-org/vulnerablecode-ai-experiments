@@ -4,7 +4,7 @@ This repository contains experiments with AI-driven parsers for analyzing vulner
 
 ## Usage
 
-All parsers can be accessed through the VulnerabilityAgent class, which provides a unified interface for extracting structured vulnerability data.
+All parsers can be accessed through the `VulnerabilityAgent` class, which provides a unified interface for extracting structured vulnerability data.
 
 **Create an instance of the `VulnerabilityAgent`:**
     ```bash
@@ -13,13 +13,13 @@ All parsers can be accessed through the VulnerabilityAgent class, which provides
 
 ## Parsing a PackageURL
 
-**Get the Package URL (PURL) for the given summary:**
+**Get the Package URL (PURL) from a summary**
     ```bash
     purl = instance.get_purl_from_summary(summary) # Output: pkg:pypi/django-helpdesk
     ```
-    Ensure the `summary` variable contains the relevant information to extract the PURL.
+    Ensure that the summary variable contains enough information to extract the PURL.
 
-**Get the version ranges (affected and fixed versions) from the summary:**
+**Get affected and fixed version ranges**
     ```bash
     version_ranges = instance.get_version_ranges(summary, purl.type)
     ```

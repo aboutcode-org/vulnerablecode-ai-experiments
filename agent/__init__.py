@@ -22,13 +22,9 @@ from pydantic_ai.models.openai import OpenAIChatModel, OpenAIChatModelSettings
 from pydantic_ai.providers.openai import OpenAIProvider
 from univers.version_range import RANGE_CLASS_BY_SCHEMES
 
-from prompts import (
-    PROMPT_CWE_FROM_SUMMARY,
-    PROMPT_PURL_FROM_CPE,
-    PROMPT_PURL_FROM_SUMMARY,
-    PROMPT_SEVERITY_FROM_SUMMARY,
-    PROMPT_VERSION_FROM_SUMMARY,
-)
+from prompts import (PROMPT_CWE_FROM_SUMMARY, PROMPT_PURL_FROM_CPE,
+                     PROMPT_PURL_FROM_SUMMARY, PROMPT_SEVERITY_FROM_SUMMARY,
+                     PROMPT_VERSION_FROM_SUMMARY)
 
 load_dotenv()
 
@@ -95,7 +91,9 @@ class BaseParser:
         self.agent = Agent(
             self.model,
             system_prompt=system_prompt,
-            model_settings=OpenAIChatModelSettings(temperature=OPENAI_TEMPERATURE, seed=OPENAI_MODEL_SEED),
+            model_settings=OpenAIChatModelSettings(
+                temperature=OPENAI_TEMPERATURE, seed=OPENAI_MODEL_SEED
+            ),
             output_type=output_type,
         )
 
@@ -174,7 +172,11 @@ class CWEFromSummaryParser(BaseParser):
 
 
 class VulnerabilityAgent:
-    """Facade for all vulnerability parsing tasks."""
+    """Unified interface for parsing vulnerability information.
+
+    Handles extraction of PURLs, version ranges, severities, and CWEs
+    from vulnerability summaries or CPE identifiers.
+    """
 
     def __init__(self):
         self.purl_parser = PurlFromSummaryParser()
@@ -184,16 +186,21 @@ class VulnerabilityAgent:
         self.cwe_parser = CWEFromSummaryParser()
 
     def get_purl_from_summary(self, summary: str):
+        """Extract PURL from a vulnerability summary."""
         return self.purl_parser.get_purl(summary)
 
     def get_version_ranges(self, summary: str, ecosystem: str):
+        """Extract affected version ranges from a summary."""
         return self.versions_parser.get_version_ranges(summary, ecosystem)
 
     def get_purl_from_cpe(self, cpe: str, pkg_type: str):
+        """Convert a CPE string to a PURL."""
         return self.cpe_parser.get_purl(cpe, pkg_type)
 
     def get_severity_from_summary(self, summary: str):
+        """Extract severity information from a summary."""
         return self.severity_parser.get_severity(summary)
 
     def get_cwe_from_summary(self, summary: str):
+        """Extract CWE identifiers from a summary."""
         return self.cwe_parser.get_cwes(summary)
