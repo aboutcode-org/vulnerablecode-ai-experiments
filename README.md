@@ -51,7 +51,7 @@ summary = "..."
 severity = instance.get_severity_from_summary(summary)
 print(severity)  # low , medium, high , critical 
 ```
-Ensure the `cpe` variable contains the relevant information to extract the PURL.
+Ensure the summary variable contains enough information to determine the severity.
 
 **Get the CWE for the given summary:**
 ```bash
@@ -59,7 +59,7 @@ summary = "Deserialization of untrusted data in Microsoft Office SharePoint allo
 cwes = instance.get_cwe_from_summary(summary)
 print(cwes)  # Output: CWE-502
 ```
-Ensure the `cpe` variable contains the relevant information to extract the PURL.
+Ensure the summary variable contains enough information to extract the CWE list.
  
 ---
 
