@@ -1,0 +1,380 @@
+{
+  "prompt_v1": {
+    "total": 44,
+    "severity_correct": 5,
+    "cwe_correct": 1,
+    "severity_accuracy": 0.11363636363636363,
+    "cwe_accuracy": 0.022727272727272728,
+    "errors": [
+      {
+        "summary_preview": "The Gallery Plugin for WordPress \u2013 Envira Photo Gallery plugin for WordPress is vulnerable to unauthorized modification of data due to a missing capability check on several functions in all versions u",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability in the web UI of the Cisco Firepower Management Center (FMC) could allow an authenticated, remote attacker to inject arbitrary commands that are executed with the privileges of the roo",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "In ipSecSetEncapSocketOwner of XfrmController.cpp, there is a possible failure to initialize a security feature due to uninitialized data. This could lead to local denial of service of IPsec on socket",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\ncgroup/cpuset: Prevent UAF in proc_cpuset_show()\n\nAn UAF can happen when /proc/cpuset is read as reported in [1].\n\nThis can be repr",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability classified as critical was found in code-projects Real Estate Property Management System 1.0. This vulnerability affects unknown code of the file /Admin/InsertCategory.php. The manipul",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\nnet/smc: fix NULL sndbuf_desc in smc_cdc_tx_handler()\n\nWhen performing a stress test on SMC-R by rmmod mlx5_ib driver\nduring the wr",
+        "error": "UnexpectedModelBehavior(\"Invalid response from OpenAI chat completions endpoint: 5 validation errors for ChatCompletion\\nchoices.0.message.tool_calls.1.ChatCompletionMessageFunctionToolCall.id\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageFunctionToolCall.function.name\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.id\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.custom\\n  Field required [type=missing, input_value={'id': None, 'function': ... 'function', 'index': 1}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.type\\n  Input should be 'custom' [type=literal_error, input_value='function', input_type=str]\\n    For further information visit https://errors.pydantic.dev/2.11/v/literal_error\")",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "The Linux kernel allows userspace processes to enable mitigations by calling prctl with PR_SET_SPECULATION_CTRL which disables the speculation feature as well as by using seccomp. We had noticed that ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "During a snapshot rollback, the client incorrectly caches the timestamp metadata. If the client checks the cache when attempting to perform the next update, the update timestamp validation will fail, ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\nenetc: Fix illegal access when reading affinity_hint\n\nirq_set_affinity_hit() stores a reference to the cpumask_t\nparameter in the i",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "user_oidc provides the OIDC connect user backend for Nextcloud, an open-source cloud platform. Starting in version 1.0.0 and prior to version 1.3.3, an attacker that obtained at least read access to a",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "A vulnerability in the login authentication functionality of the Remote Access SSL VPN feature of Cisco Adaptive Security Appliance (ASA) Software and Cisco Firepower Threat Defense (FTD) Software cou",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "GIMP FF File Parsing Integer Overflow Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of GIMP. User interaction is r",
+        "error": "UnexpectedModelBehavior(\"Invalid response from OpenAI chat completions endpoint: 5 validation errors for ChatCompletion\\nchoices.0.message.tool_calls.1.ChatCompletionMessageFunctionToolCall.id\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageFunctionToolCall.function.name\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.id\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.custom\\n  Field required [type=missing, input_value={'id': None, 'function': ... 'function', 'index': 1}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.type\\n  Input should be 'custom' [type=literal_error, input_value='function', input_type=str]\\n    For further information visit https://errors.pydantic.dev/2.11/v/literal_error\")",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Code Injection\nParsedown, when safe mode is used and HTML markup is disabled, might allow attackers to execute arbitrary JavaScript code if a script (already running on the affected page) executes the",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "A vulnerability, which was classified as critical, has been found in SourceCodester Computer Store System 1.0. This issue affects the function Add of the file main.c. The manipulation of the argument ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "Race condition in the vop_ioctl function in drivers/misc/mic/vop/vop_vringh.c in the MIC VOP driver in the Linux kernel before 4.6.1 allows local users to obtain sensitive information from kernel memo",
+        "error": "UnexpectedModelBehavior(\"Invalid response from OpenAI chat completions endpoint: 5 validation errors for ChatCompletion\\nchoices.0.message.tool_calls.1.ChatCompletionMessageFunctionToolCall.id\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageFunctionToolCall.function.name\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.id\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.custom\\n  Field required [type=missing, input_value={'id': None, 'function': ... 'function', 'index': 1}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\\nchoices.0.message.tool_calls.1.ChatCompletionMessageCustomToolCall.type\\n  Input should be 'custom' [type=literal_error, input_value='function', input_type=str]\\n    For further information visit https://errors.pydantic.dev/2.11/v/literal_error\")",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "The AI Power: Complete AI Pack plugin for WordPress is vulnerable to Server-Side Request Forgery in all versions up to, and including, 1.8.96 via the wpaicg_troubleshoot_add_vector(). This makes it po",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability was found in PX4-Autopilot 1.12.3. It has been classified as problematic. This affects the function MavlinkReceiver::handle_message_trajectory_representation_waypoints of the file mavl",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "Velocidex WinPmem versions 4.1 and below suffer from an Improper Input Validation vulnerability whereby an attacker with admin access can trigger a BSOD\u00a0with a parallel thread changing the memory\u2019s ac",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "All versions of the package github.com/greenpau/caddy-security are vulnerable to Open Redirect via the redirect_url parameter. An attacker could perform a phishing attack and trick users into visiting",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "Data Amplification in Play Framework\nAn issue was discovered in Play Framework 2.8.0 through 2.8.4. Carefully crafted JSON payloads sent as a form field lead to Data Amplification. This affects users ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "ClickHouse is an open-source column-oriented database management system. A bug exists in the cloud ClickHouse offering prior to version 24.0.2.54535 and in github.com/clickhouse/clickhouse version 23.",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "Containous Traefik Exposes Password Hashes\ntypes/types.go in Containous Traefik 1.7.x through 1.7.11, when the `--api` flag is used and the API is publicly reachable and exposed without sufficient acc",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Horovod Vulnerable to Command Injection\nHorovod versions up to and including v0.28.1 are vulnerable to unauthenticated remote code execution. The vulnerability is due to improper handling of base64-en",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "critical"
+      },
+      {
+        "summary_preview": "A cross-site scripting (XSS) vulnerability has been reported to affect several QNAP operating system versions. If exploited, the vulnerability could allow remote attackers who have gained user access ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Memory corruption due to buffer overflow while copying the message provided by HLOS into buffer without validating the length of buffer in Snapdragon Auto, Snapdragon Compute, Snapdragon Connectivity,",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Moxa ioLogik E2200 devices before 3.12 and ioAdmin Configuration Utility before 3.18 do not properly encrypt credentials, which makes it easier for remote attackers to obtain the associated cleartext ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "Adobe After Effects version 17.1.1 (and earlier) is affected by an out-of-bounds read vulnerability when parsing a crafted .aepx file, which could result in a read past the end of an allocated memory ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "An issue was discovered in certain Apple products. iOS before 10.2 is affected. macOS before 10.12.2 is affected. watchOS before 3.1.3 is affected. The issue involves the \"IOKit\" component. It allows ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "Flux is a tool for keeping Kubernetes clusters in sync with sources of configuration (like Git repositories), and automating updates to configuration when there is new code to deploy. Flux CLI allows ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability in the Zone-Based Policy Firewall feature of Cisco IOS XE Software could allow an unauthenticated, remote attacker to prevent the Zone-Based Policy Firewall from correctly classifying ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      }
+    ]
+  },
+  "prompt_v2": {
+    "total": 44,
+    "severity_correct": 1,
+    "cwe_correct": 0,
+    "severity_accuracy": 0.022727272727272728,
+    "cwe_accuracy": 0.0,
+    "errors": [
+      {
+        "summary_preview": "A vulnerability classified as critical has been found in code-projects Exam Form Submission 1.0. Affected is an unknown function of the file /admin/update_s8.php. The manipulation of the argument cred",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "The Gallery Plugin for WordPress \u2013 Envira Photo Gallery plugin for WordPress is vulnerable to unauthorized modification of data due to a missing capability check on several functions in all versions u",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\nf2fs: check discard support for conventional zones\n\nAs the helper function f2fs_bdev_support_discard() shows, f2fs checks if\nthe ta",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability in the web UI of the Cisco Firepower Management Center (FMC) could allow an authenticated, remote attacker to inject arbitrary commands that are executed with the privileges of the roo",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\ncgroup/cpuset: Prevent UAF in proc_cpuset_show()\n\nAn UAF can happen when /proc/cpuset is read as reported in [1].\n\nThis can be repr",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability classified as critical was found in code-projects Real Estate Property Management System 1.0. This vulnerability affects unknown code of the file /Admin/InsertCategory.php. The manipul",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "The New User Approve plugin for WordPress is vulnerable to unauthorized data disclosure in all versions up to, and including, 3.0.9 due to insufficient API key validation using loose equality comparis",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')\nTYPO3 is a free and open source Content Management Framework released under the GNU General Public License. In affe",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\nnet/smc: fix NULL sndbuf_desc in smc_cdc_tx_handler()\n\nWhen performing a stress test on SMC-R by rmmod mlx5_ib driver\nduring the wr",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\npowerpc/64s: Don't use DSISR for SLB faults\n\nSince commit 46ddcb3950a2 (\"powerpc/mm: Show if a bad page fault on data\nis read or wr",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "The product transmits or stores authentication credentials, but it uses an insecure method that is susceptible to unauthorized interception and/or retrieval. (CWE-522) \n\n\n\n\u00a0\n\n\n\nHitachi Vantara Pentaho",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "The JobBoardWP \u2013 Job Board Listings and Submissions plugin for WordPress is vulnerable to Reflected Cross-Site Scripting due to the use of add_query_arg & remove_query_arg without appropriate escaping",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability, which was classified as problematic, was found in SourceCodester Web-based Pharmacy Product Management System 1.0. This affects an unknown part of the file add-supplier.php. The manip",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "The Linux kernel allows userspace processes to enable mitigations by calling prctl with PR_SET_SPECULATION_CTRL which disables the speculation feature as well as by using seccomp. We had noticed that ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability classified as critical was found in zhijiantianya ruoyi-vue-pro 2.4.1. This vulnerability affects unknown code of the file /admin-api/mp/material/upload-permanent of the component Mate",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "Buffer underflow in atmfd.dll in the Windows Adobe Type Manager Library in Microsoft Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 G",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Aerospike Community Edition 4.9.0.5 allows for unauthenticated submission and execution of user-defined functions (UDFs), written in Lua, as part of a database query. It attempts to restrict code exec",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "critical"
+      },
+      {
+        "summary_preview": "During a snapshot rollback, the client incorrectly caches the timestamp metadata. If the client checks the cache when attempting to perform the next update, the update timestamp validation will fail, ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "In the Linux kernel, the following vulnerability has been resolved:\n\nenetc: Fix illegal access when reading affinity_hint\n\nirq_set_affinity_hit() stores a reference to the cpumask_t\nparameter in the i",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "user_oidc provides the OIDC connect user backend for Nextcloud, an open-source cloud platform. Starting in version 1.0.0 and prior to version 1.3.3, an attacker that obtained at least read access to a",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "A vulnerability in the login authentication functionality of the Remote Access SSL VPN feature of Cisco Adaptive Security Appliance (ASA) Software and Cisco Firepower Threat Defense (FTD) Software cou",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "GIMP FF File Parsing Integer Overflow Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of GIMP. User interaction is r",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Code Injection\nParsedown, when safe mode is used and HTML markup is disabled, might allow attackers to execute arbitrary JavaScript code if a script (already running on the affected page) executes the",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Race condition in the vop_ioctl function in drivers/misc/mic/vop/vop_vringh.c in the MIC VOP driver in the Linux kernel before 4.6.1 allows local users to obtain sensitive information from kernel memo",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "The AI Power: Complete AI Pack plugin for WordPress is vulnerable to Server-Side Request Forgery in all versions up to, and including, 1.8.96 via the wpaicg_troubleshoot_add_vector(). This makes it po",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability was found in PX4-Autopilot 1.12.3. It has been classified as problematic. This affects the function MavlinkReceiver::handle_message_trajectory_representation_waypoints of the file mavl",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "Velocidex WinPmem versions 4.1 and below suffer from an Improper Input Validation vulnerability whereby an attacker with admin access can trigger a BSOD\u00a0with a parallel thread changing the memory\u2019s ac",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "All versions of the package github.com/greenpau/caddy-security are vulnerable to Open Redirect via the redirect_url parameter. An attacker could perform a phishing attack and trick users into visiting",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "Data Amplification in Play Framework\nAn issue was discovered in Play Framework 2.8.0 through 2.8.4. Carefully crafted JSON payloads sent as a form field lead to Data Amplification. This affects users ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "ClickHouse is an open-source column-oriented database management system. A bug exists in the cloud ClickHouse offering prior to version 24.0.2.54535 and in github.com/clickhouse/clickhouse version 23.",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "Containous Traefik Exposes Password Hashes\ntypes/types.go in Containous Traefik 1.7.x through 1.7.11, when the `--api` flag is used and the API is publicly reachable and exposed without sufficient acc",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Horovod Vulnerable to Command Injection\nHorovod versions up to and including v0.28.1 are vulnerable to unauthenticated remote code execution. The vulnerability is due to improper handling of base64-en",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "critical"
+      },
+      {
+        "summary_preview": "A cross-site scripting (XSS) vulnerability has been reported to affect several QNAP operating system versions. If exploited, the vulnerability could allow remote attackers who have gained user access ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Memory corruption due to buffer overflow while copying the message provided by HLOS into buffer without validating the length of buffer in Snapdragon Auto, Snapdragon Compute, Snapdragon Connectivity,",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Moxa ioLogik E2200 devices before 3.12 and ioAdmin Configuration Utility before 3.18 do not properly encrypt credentials, which makes it easier for remote attackers to obtain the associated cleartext ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "Adobe After Effects version 17.1.1 (and earlier) is affected by an out-of-bounds read vulnerability when parsing a crafted .aepx file, which could result in a read past the end of an allocated memory ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "An Improper Validation of Specified Quantity in Input vulnerability in the routing protocol daemon (rpd) of Juniper Networks Junos OS allows an unauthenticated networked attacker to cause an rdp crash",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "An issue was discovered in certain Apple products. iOS before 10.2 is affected. macOS before 10.12.2 is affected. watchOS before 3.1.3 is affected. The issue involves the \"IOKit\" component. It allows ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "low"
+      },
+      {
+        "summary_preview": "Flux is a tool for keeping Kubernetes clusters in sync with sources of configuration (like Git repositories), and automating updates to configuration when there is new code to deploy. Flux CLI allows ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "A vulnerability in the Zone-Based Policy Firewall feature of Cisco IOS XE Software could allow an unauthenticated, remote attacker to prevent the Zone-Based Policy Firewall from correctly classifying ",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "medium"
+      },
+      {
+        "summary_preview": "The WP Custom Cursors WordPress plugin before 3.2 does not properly sanitise and escape a parameter before using it in a SQL statement, leading to a SQL injection exploitable by users with a role as l",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      },
+      {
+        "summary_preview": "Possible integer overflow due to improper length check while updating grace period and count record in Snapdragon Auto, Snapdragon Compute, Snapdragon Connectivity, Snapdragon Industrial IOT, Snapdrag",
+        "error": "UnexpectedModelBehavior('Exceeded maximum retries (1) for output validation')",
+        "expected_severity": "high"
+      }
+    ]
+  }
+}
