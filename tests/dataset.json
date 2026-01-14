@@ -1,0 +1,460 @@
+[
+  {
+    "vulnerability_id": "VCID-114f-yayd-gkak",
+    "cve": "CVE-2025-8273",
+    "summary": "A vulnerability classified as critical has been found in code-projects Exam Form Submission 1.0. Affected is an unknown function of the file /admin/update_s8.php. The manipulation of the argument credits leads to sql injection. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-74",
+      "CWE-89"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-8273"
+  },
+  {
+    "vulnerability_id": "VCID-114m-fd4z-n7df",
+    "cve": "CVE-2025-12377",
+    "summary": "The Gallery Plugin for WordPress \u2013 Envira Photo Gallery plugin for WordPress is vulnerable to unauthorized modification of data due to a missing capability check on several functions in all versions up to, and including, 1.12.0. This makes it possible for authenticated attackers, with Author-level access and above, to perform multiple actions, such as removing images from arbitrary galleries. The vulnerability was partially patched in version 1.12.0.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-862"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-12377"
+  },
+  {
+    "vulnerability_id": "VCID-115u-7e9s-wkcm",
+    "cve": "CVE-2024-47680",
+    "summary": "In the Linux kernel, the following vulnerability has been resolved:\n\nf2fs: check discard support for conventional zones\n\nAs the helper function f2fs_bdev_support_discard() shows, f2fs checks if\nthe target block devices support discard by calling\nbdev_max_discard_sectors() and bdev_is_zoned(). This check works well\nfor most cases, but it does not work for conventional zones on zoned\nblock devices. F2fs assumes that zoned block devices support discard,\nand calls __submit_discard_cmd(). When __submit_discard_cmd() is called\nfor sequential write required zones, it works fine since\n__submit_discard_cmd() issues zone reset commands instead of discard\ncommands. However, when __submit_discard_cmd() is called for\nconventional zones, __blkdev_issue_discard() is called even when the\ndevices do not support discard.\n\nThe inappropriate __blkdev_issue_discard() call was not a problem before\nthe commit 30f1e7241422 (\"block: move discard checks into the ioctl\nhandler\") because __blkdev_issue_discard() checked if the target devices\nsupport discard or not. If not, it returned EOPNOTSUPP. After the\ncommit, __blkdev_issue_discard() no longer checks it. It always returns\nzero and sets NULL to the given bio pointer. This NULL pointer triggers\nf2fs_bug_on() in __submit_discard_cmd(). The BUG is recreated with the\ncommands below at the umount step, where /dev/nullb0 is a zoned null_blk\nwith 5GB total size, 128MB zone size and 10 conventional zones.\n\n$ mkfs.f2fs -f -m /dev/nullb0\n$ mount /dev/nullb0 /mnt\n$ for ((i=0;i<5;i++)); do dd if=/dev/zero of=/mnt/test bs=65536 count=1600 conv=fsync; done\n$ umount /mnt\n\nTo fix the BUG, avoid the inappropriate __blkdev_issue_discard() call.\nWhen discard is requested for conventional zones, check if the device\nsupports discard or not. If not, return EOPNOTSUPP.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-476"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-47680"
+  },
+  {
+    "vulnerability_id": "VCID-115w-kpgd-eyes",
+    "cve": "CVE-2019-12690",
+    "summary": "A vulnerability in the web UI of the Cisco Firepower Management Center (FMC) could allow an authenticated, remote attacker to inject arbitrary commands that are executed with the privileges of the root user of the underlying operating system. The vulnerability is due to insufficient validation of user-supplied input to the web UI. An attacker could exploit this vulnerability by submitting crafted input in the web UI. A successful exploit could allow an attacker to execute arbitrary commands on the device with full root privileges.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-78"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2019-12690"
+  },
+  {
+    "vulnerability_id": "VCID-115x-f81n-ukdu",
+    "cve": "CVE-2018-9511",
+    "summary": "In ipSecSetEncapSocketOwner of XfrmController.cpp, there is a possible failure to initialize a security feature due to uninitialized data. This could lead to local denial of service of IPsec on sockets with no additional execution privileges needed. User interaction is not needed for exploitation. Product: Android Versions: Android-9.0 Android ID: A-111650288",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-909"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2018-9511"
+  },
+  {
+    "vulnerability_id": "VCID-1168-ntx4-zudz",
+    "cve": "CVE-2024-43853",
+    "summary": "In the Linux kernel, the following vulnerability has been resolved:\n\ncgroup/cpuset: Prevent UAF in proc_cpuset_show()\n\nAn UAF can happen when /proc/cpuset is read as reported in [1].\n\nThis can be reproduced by the following methods:\n1.add an mdelay(1000) before acquiring the cgroup_lock In the\n cgroup_path_ns function.\n2.$cat /proc/<pid>/cpuset   repeatly.\n3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/\n$umount /sys/fs/cgroup/cpuset/   repeatly.\n\nThe race that cause this bug can be shown as below:\n\n(umount)\t\t|\t(cat /proc/<pid>/cpuset)\ncss_release\t\t|\tproc_cpuset_show\ncss_release_work_fn\t|\tcss = task_get_css(tsk, cpuset_cgrp_id);\ncss_free_rwork_fn\t|\tcgroup_path_ns(css->cgroup, ...);\ncgroup_destroy_root\t|\tmutex_lock(&cgroup_mutex);\nrebind_subsystems\t|\ncgroup_free_root \t|\n\t\t\t|\t// cgrp was freed, UAF\n\t\t\t|\tcgroup_path_ns_locked(cgrp,..);\n\nWhen the cpuset is initialized, the root node top_cpuset.css.cgrp\nwill point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will\nallocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated\n&cgroup_root.cgrp. When the umount operation is executed,\ntop_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.\n\nThe problem is that when rebinding to cgrp_dfl_root, there are cases\nwhere the cgroup_root allocated by setting up the root for cgroup v1\nis cached. This could lead to a Use-After-Free (UAF) if it is\nsubsequently freed. The descendant cgroups of cgroup v1 can only be\nfreed after the css is released. However, the css of the root will never\nbe released, yet the cgroup_root should be freed when it is unmounted.\nThis means that obtaining a reference to the css of the root does\nnot guarantee that css.cgrp->root will not be freed.\n\nFix this problem by using rcu_read_lock in proc_cpuset_show().\nAs cgroup_root is kfree_rcu after commit d23b5c577715\n(\"cgroup: Make operations on the cgroup root_list RCU safe\"),\ncss->cgroup won't be freed during the critical section.\nTo call cgroup_path_ns_locked, css_set_lock is needed, so it is safe to\nreplace task_get_css with task_css.\n\n[1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-416"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-43853"
+  },
+  {
+    "vulnerability_id": "VCID-1188-f798-tqd6",
+    "cve": "CVE-2025-5709",
+    "summary": "A vulnerability classified as critical was found in code-projects Real Estate Property Management System 1.0. This vulnerability affects unknown code of the file /Admin/InsertCategory.php. The manipulation of the argument txtCategoryName leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-74",
+      "CWE-89"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-5709"
+  },
+  {
+    "vulnerability_id": "VCID-118j-dyjt-qubt",
+    "cve": "CVE-2025-12770",
+    "summary": "The New User Approve plugin for WordPress is vulnerable to unauthorized data disclosure in all versions up to, and including, 3.0.9 due to insufficient API key validation using loose equality comparison. This makes it possible for unauthenticated attackers to retrieve personally identifiable information (PII), including usernames and email addresses of users with various approval statuses via the Zapier REST API endpoints, by exploiting PHP type juggling with the api_key parameter set to \"0\" on sites where the Zapier API key has not been configured.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-200"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-12770"
+  },
+  {
+    "vulnerability_id": "VCID-118m-c3v7-zbfh",
+    "cve": "CVE-2023-24814",
+    "summary": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')\nTYPO3 is a free and open source Content Management Framework released under the GNU General Public License. In affected versions the TYPO3 core component `GeneralUtility::getIndpEnv()` uses the unfiltered server environment variable `PATH_INFO`, which allows attackers to inject malicious content. In combination with the TypoScript setting `config.absRefPrefix=auto`, attackers can inject malicious HTML code to pages that have not been rendered and cached, yet. As a result, injected values would be cached and delivered to other website visitors (persisted cross-site scripting). Individual code which relies on the resolved value of `GeneralUtility::getIndpEnv('SCRIPT_NAME')` and corresponding usages (as shown below) is vulnerable as well. Additional investigations confirmed that at least Apache web server deployments using CGI (FPM, FCGI/FastCGI, and similar) are affected. However, there still might be the risk that other scenarios like nginx, IIS, or Apache/mod_php is vulnerable. The usage of server environment variable `PATH_INFO` has been removed from corresponding processings in `GeneralUtility::getIndpEnv()`. Besides that, the public property `TypoScriptFrontendController::$absRefPrefix` is encoded for both being used as a URI component and for being used as a prefix in an HTML context. This mitigates the cross-site scripting vulnerability. Users are advised to update to TYPO3 versions 8.7.51 ELTS, 9.5.40 ELTS, 10.4.35 LTS, 11.5.23 LTS and 12.2.0 which fix this problem. For users who are unable to patch in a timely manner the TypoScript setting `config.absRefPrefix` should at least be set to a static path value, instead of using auto - e.g. `config.absRefPrefix=/`. This workaround **does not fix all aspects of the vulnerability**, and is just considered to be an intermediate mitigation to the most prominent manifestation.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-1035",
+      "CWE-79",
+      "CWE-937"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2023-24814"
+  },
+  {
+    "vulnerability_id": "VCID-118s-fr5a-2kep",
+    "cve": "CVE-2023-53110",
+    "summary": "In the Linux kernel, the following vulnerability has been resolved:\n\nnet/smc: fix NULL sndbuf_desc in smc_cdc_tx_handler()\n\nWhen performing a stress test on SMC-R by rmmod mlx5_ib driver\nduring the wrk/nginx test, we found that there is a probability\nof triggering a panic while terminating all link groups.\n\nThis issue dues to the race between smc_smcr_terminate_all()\nand smc_buf_create().\n\n\t\t\tsmc_smcr_terminate_all\n\nsmc_buf_create\n/* init */\nconn->sndbuf_desc = NULL;\n...\n\n\t\t\t__smc_lgr_terminate\n\t\t\t\tsmc_conn_kill\n\t\t\t\t\tsmc_close_abort\n\t\t\t\t\t\tsmc_cdc_get_slot_and_msg_send\n\n\t\t\t__softirqentry_text_start\n\t\t\t\tsmc_wr_tx_process_cqe\n\t\t\t\t\tsmc_cdc_tx_handler\n\t\t\t\t\t\tREAD(conn->sndbuf_desc->len);\n\t\t\t\t\t\t/* panic dues to NULL sndbuf_desc */\n\nconn->sndbuf_desc = xxx;\n\nThis patch tries to fix the issue by always to check the sndbuf_desc\nbefore send any cdc msg, to make sure that no null pointer is\nseen during cqe processing.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-476"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2023-53110"
+  },
+  {
+    "vulnerability_id": "VCID-119q-u28f-xkhj",
+    "cve": "CVE-2022-49214",
+    "summary": "In the Linux kernel, the following vulnerability has been resolved:\n\npowerpc/64s: Don't use DSISR for SLB faults\n\nSince commit 46ddcb3950a2 (\"powerpc/mm: Show if a bad page fault on data\nis read or write.\") we use page_fault_is_write(regs->dsisr) in\n__bad_page_fault() to determine if the fault is for a read or write, and\nchange the message printed accordingly.\n\nBut SLB faults, aka Data Segment Interrupts, don't set DSISR (Data\nStorage Interrupt Status Register) to a useful value. All ISA versions\nfrom v2.03 through v3.1 specify that the Data Segment Interrupt sets\nDSISR \"to an undefined value\". As far as I can see there's no mention of\nSLB faults setting DSISR in any BookIV content either.\n\nThis manifests as accesses that should be a read being incorrectly\nreported as writes, for example, using the xmon \"dump\" command:\n\n  0:mon> d 0x5deadbeef0000000\n  5deadbeef0000000\n  [359526.415354][    C6] BUG: Unable to handle kernel data access on write at 0x5deadbeef0000000\n  [359526.415611][    C6] Faulting instruction address: 0xc00000000010a300\n  cpu 0x6: Vector: 380 (Data SLB Access) at [c00000000ffbf400]\n      pc: c00000000010a300: mread+0x90/0x190\n\nIf we disassemble the PC, we see a load instruction:\n\n  0:mon> di c00000000010a300\n  c00000000010a300 89490000      lbz     r10,0(r9)\n\nWe can also see in exceptions-64s.S that the data_access_slb block\ndoesn't set IDSISR=1, which means it doesn't load DSISR into pt_regs. So\nthe value we're using to determine if the fault is a read/write is some\nstale value in pt_regs from a previous page fault.\n\nRework the printing logic to separate the SLB fault case out, and only\nprint read/write in the cases where we can determine it.\n\nThe result looks like eg:\n\n  0:mon> d 0x5deadbeef0000000\n  5deadbeef0000000\n  [  721.779525][    C6] BUG: Unable to handle kernel data access at 0x5deadbeef0000000\n  [  721.779697][    C6] Faulting instruction address: 0xc00000000014cbe0\n  cpu 0x6: Vector: 380 (Data SLB Access) at [c00000000ffbf390]\n\n  0:mon> d 0\n  0000000000000000\n  [  742.793242][    C6] BUG: Kernel NULL pointer dereference at 0x00000000\n  [  742.793316][    C6] Faulting instruction address: 0xc00000000014cbe0\n  cpu 0x6: Vector: 380 (Data SLB Access) at [c00000000ffbf390]",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-476"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2022-49214"
+  },
+  {
+    "vulnerability_id": "VCID-11aq-pftb-q3f8",
+    "cve": "CVE-2024-37362",
+    "summary": "The product transmits or stores authentication credentials, but it uses an insecure method that is susceptible to unauthorized interception and/or retrieval. (CWE-522) \n\n\n\n\u00a0\n\n\n\nHitachi Vantara Pentaho Data Integration & Analytics versions before 10.2.0.0 and 9.3.0.8, including 8.3.x, discloses database passwords when saving connections to RedShift.\n\n\n\n\u00a0\n\n\n\nProducts must not disclose sensitive information without cause. Disclosure of sensitive information can lead to further exploitation.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-522"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-37362"
+  },
+  {
+    "vulnerability_id": "VCID-11au-dbtq-3bgq",
+    "cve": "CVE-2024-10880",
+    "summary": "The JobBoardWP \u2013 Job Board Listings and Submissions plugin for WordPress is vulnerable to Reflected Cross-Site Scripting due to the use of add_query_arg & remove_query_arg without appropriate escaping on the URL in all versions up to, and including, 1.3.0. This makes it possible for unauthenticated attackers to inject arbitrary web scripts in pages that execute if they can successfully trick a user into performing an action such as clicking on a link.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-79"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-10880"
+  },
+  {
+    "vulnerability_id": "VCID-11b7-bvze-jqhm",
+    "cve": "CVE-2025-3826",
+    "summary": "A vulnerability, which was classified as problematic, was found in SourceCodester Web-based Pharmacy Product Management System 1.0. This affects an unknown part of the file add-supplier.php. The manipulation of the argument txtsupplier_name/txtaddress leads to cross site scripting. It is possible to initiate the attack remotely. The exploit has been disclosed to the public and may be used.",
+    "expected_severity": "low",
+    "expected_cwe_list": [
+      "CWE-79",
+      "CWE-94"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-3826"
+  },
+  {
+    "vulnerability_id": "VCID-11bv-zr9p-j3bv",
+    "cve": "CVE-2023-1998",
+    "summary": "The Linux kernel allows userspace processes to enable mitigations by calling prctl with PR_SET_SPECULATION_CTRL which disables the speculation feature as well as by using seccomp. We had noticed that on VMs of at least one major cloud provider, the kernel still left the victim process exposed to attacks in some cases even after enabling the spectre-BTI mitigation with prctl. The same behavior can be observed on a bare-metal machine when forcing the mitigation to IBRS on boot command line.\n\nThis happened because when plain IBRS was enabled (not enhanced IBRS), the kernel had some logic that determined that STIBP was not needed. The IBRS bit implicitly protects against cross-thread branch target injection. However, with legacy IBRS, the IBRS bit was cleared on returning to userspace, due to performance reasons, which disabled the implicit STIBP and left userspace threads vulnerable to cross-thread branch target injection against which STIBP protects.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-1303",
+      "CWE-200",
+      "CWE-203",
+      "CWE-226",
+      "CWE-385"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2023-1998"
+  },
+  {
+    "vulnerability_id": "VCID-11by-6k3u-ufb9",
+    "cve": "CVE-2025-2742",
+    "summary": "A vulnerability classified as critical was found in zhijiantianya ruoyi-vue-pro 2.4.1. This vulnerability affects unknown code of the file /admin-api/mp/material/upload-permanent of the component Material Upload Interface. The manipulation of the argument File leads to path traversal. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used. The vendor was contacted early about this disclosure but did not respond in any way.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-22"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-2742"
+  },
+  {
+    "vulnerability_id": "VCID-11cp-27yq-5bgf",
+    "cve": "CVE-2015-2426",
+    "summary": "Buffer underflow in atmfd.dll in the Windows Adobe Type Manager Library in Microsoft Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows remote attackers to execute arbitrary code via a crafted OpenType font, aka \"OpenType Font Driver Vulnerability.\"",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-119",
+      "CWE-124"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2015-2426"
+  },
+  {
+    "vulnerability_id": "VCID-11db-6abz-kkfp",
+    "cve": "CVE-2020-13151",
+    "summary": "Aerospike Community Edition 4.9.0.5 allows for unauthenticated submission and execution of user-defined functions (UDFs), written in Lua, as part of a database query. It attempts to restrict code execution by disabling os.execute() calls, but this is insufficient. Anyone with network access can use a crafted UDF to execute arbitrary OS commands on all nodes of the cluster at the permission level of the user running the Aerospike service.",
+    "expected_severity": "critical",
+    "expected_cwe_list": [
+      "CWE-78"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2020-13151"
+  },
+  {
+    "vulnerability_id": "VCID-11ee-qw1e-j3dw",
+    "cve": "CVE-2025-2888",
+    "summary": "During a snapshot rollback, the client incorrectly caches the timestamp metadata. If the client checks the cache when attempting to perform the next update, the update timestamp validation will fail, preventing the next update until the cache is cleared. Users should upgrade to tough version 0.20.0 or later and ensure any forked or derivative code is patched to incorporate the new fixes.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-1025"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-2888"
+  },
+  {
+    "vulnerability_id": "VCID-11ej-wzt9-ryh4",
+    "cve": "CVE-2021-47368",
+    "summary": "In the Linux kernel, the following vulnerability has been resolved:\n\nenetc: Fix illegal access when reading affinity_hint\n\nirq_set_affinity_hit() stores a reference to the cpumask_t\nparameter in the irq descriptor, and that reference can be\naccessed later from irq_affinity_hint_proc_show(). Since\nthe cpu_mask parameter passed to irq_set_affinity_hit() has\nonly temporary storage (it's on the stack memory), later\naccesses to it are illegal. Thus reads from the corresponding\nprocfs affinity_hint file can result in paging request oops.\n\nThe issue is fixed by the get_cpu_mask() helper, which provides\na permanent storage for the cpumask_t parameter.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-400",
+      "CWE-99"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2021-47368"
+  },
+  {
+    "vulnerability_id": "VCID-11et-ya99-tqcu",
+    "cve": "CVE-2023-39954",
+    "summary": "user_oidc provides the OIDC connect user backend for Nextcloud, an open-source cloud platform. Starting in version 1.0.0 and prior to version 1.3.3, an attacker that obtained at least read access to a snapshot of the database can impersonate the Nextcloud server towards linked servers. user_oidc 1.3.3 contains a patch. No known workarounds are available.",
+    "expected_severity": "low",
+    "expected_cwe_list": [
+      "CWE-311"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2023-39954"
+  },
+  {
+    "vulnerability_id": "VCID-11gg-gh94-jfe5",
+    "cve": "CVE-2024-20493",
+    "summary": "A vulnerability in the login authentication functionality of the Remote Access SSL VPN feature of Cisco Adaptive Security Appliance (ASA) Software and Cisco Firepower Threat Defense (FTD) Software could allow an unauthenticated, remote attacker to deny further VPN user authentications for several minutes, resulting in a temporary denial of service (DoS) condition.\r\n\r This vulnerability is due to ineffective handling of memory resources during the authentication process. An attacker could exploit this vulnerability by sending crafted packets, which could cause resource exhaustion of the authentication process. A successful exploit could allow the attacker to deny authentication for Remote Access SSL VPN users for several minutes, resulting in a temporary DoS condition.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-772"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-20493"
+  },
+  {
+    "vulnerability_id": "VCID-11gr-9apw-nyhv",
+    "cve": "CVE-2025-10924",
+    "summary": "GIMP FF File Parsing Integer Overflow Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of GIMP. User interaction is required to exploit this vulnerability in that the target must visit a malicious page or open a malicious file.\n\nThe specific flaw exists within the parsing of FF files. The issue results from the lack of proper validation of user-supplied data, which can result in an integer overflow before allocating a buffer. An attacker can leverage this vulnerability to execute code in the context of the current process. Was ZDI-CAN-27836.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-190"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-10924"
+  },
+  {
+    "vulnerability_id": "VCID-11h4-kehn-aye3",
+    "cve": "CVE-2019-10905",
+    "summary": "Code Injection\nParsedown, when safe mode is used and HTML markup is disabled, might allow attackers to execute arbitrary JavaScript code if a script (already running on the affected page) executes the contents of any element with a specific class. This occurs because spaces are permitted in code block infostrings, which interferes with the intended behavior of a single class name beginning with the language- substring.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-1035",
+      "CWE-79",
+      "CWE-937"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2019-10905"
+  },
+  {
+    "vulnerability_id": "VCID-11jr-qzbg-kfc2",
+    "cve": "CVE-2025-5297",
+    "summary": "A vulnerability, which was classified as critical, has been found in SourceCodester Computer Store System 1.0. This issue affects the function Add of the file main.c. The manipulation of the argument laptopcompany/RAM/Processor leads to stack-based buffer overflow. An attack has to be approached locally. The exploit has been disclosed to the public and may be used.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-119",
+      "CWE-121",
+      "CWE-787"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-5297"
+  },
+  {
+    "vulnerability_id": "VCID-11kp-qy3r-jfgn",
+    "cve": "CVE-2016-5728",
+    "summary": "Race condition in the vop_ioctl function in drivers/misc/mic/vop/vop_vringh.c in the MIC VOP driver in the Linux kernel before 4.6.1 allows local users to obtain sensitive information from kernel memory or cause a denial of service (memory corruption and system crash) by changing a certain header, aka a \"double fetch\" vulnerability.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-119",
+      "CWE-362"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2016-5728"
+  },
+  {
+    "vulnerability_id": "VCID-11mn-nst4-uya2",
+    "cve": "CVE-2024-13360",
+    "summary": "The AI Power: Complete AI Pack plugin for WordPress is vulnerable to Server-Side Request Forgery in all versions up to, and including, 1.8.96 via the wpaicg_troubleshoot_add_vector(). This makes it possible for authenticated attackers, with subscriber-level access and above, to make web requests to arbitrary locations originating from the web application and can be used to query and modify information from internal services.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-918"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-13360"
+  },
+  {
+    "vulnerability_id": "VCID-11ms-q123-rkgh",
+    "cve": "CVE-2025-5640",
+    "summary": "A vulnerability was found in PX4-Autopilot 1.12.3. It has been classified as problematic. This affects the function MavlinkReceiver::handle_message_trajectory_representation_waypoints of the file mavlink_receiver.cpp of the component TRAJECTORY_REPRESENTATION_WAYPOINTS Message Handler. The manipulation leads to stack-based buffer overflow. Local access is required to approach this attack. The exploit has been disclosed to the public and may be used.",
+    "expected_severity": "low",
+    "expected_cwe_list": [
+      "CWE-119",
+      "CWE-121"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-5640"
+  },
+  {
+    "vulnerability_id": "VCID-11p6-4ac8-wqat",
+    "cve": "CVE-2024-10972",
+    "summary": "Velocidex WinPmem versions 4.1 and below suffer from an Improper Input Validation vulnerability whereby an attacker with admin access can trigger a BSOD\u00a0with a parallel thread changing the memory\u2019s access right under the control of the user-mode application. This is due to verification only being performed at the beginning of the routine allowing the\u00a0userspace to change page permissions half way through the routine.\u00a0 A valid workaround is a rule to detect unauthorized loading of winpmem outside incident response operations.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-367"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-10972"
+  },
+  {
+    "vulnerability_id": "VCID-11p8-eeah-x7gv",
+    "cve": "CVE-2024-21497",
+    "summary": "All versions of the package github.com/greenpau/caddy-security are vulnerable to Open Redirect via the redirect_url parameter. An attacker could perform a phishing attack and trick users into visiting a malicious website by crafting a convincing URL with this parameter. To exploit this vulnerability, the user must take an action, such as clicking on a portal button or using the browser\u2019s back button, to trigger the redirection.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-601"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-21497"
+  },
+  {
+    "vulnerability_id": "VCID-11dq-xpg8-33fz",
+    "cve": "CVE-2020-28923",
+    "summary": "Data Amplification in Play Framework\nAn issue was discovered in Play Framework 2.8.0 through 2.8.4. Carefully crafted JSON payloads sent as a form field lead to Data Amplification. This affects users migrating from a Play version prior to 2.8.0 that used the Play Java API to serialize classes with protected or private fields to JSON.",
+    "expected_severity": "low",
+    "expected_cwe_list": [
+      "CWE-20"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2020-28923"
+  },
+  {
+    "vulnerability_id": "VCID-11a4-w6sz-u7fs",
+    "cve": "CVE-2024-22412",
+    "summary": "ClickHouse is an open-source column-oriented database management system. A bug exists in the cloud ClickHouse offering prior to version 24.0.2.54535 and in github.com/clickhouse/clickhouse version 23.1. Query caching bypasses the role based access controls and the policies being enforced on roles. In affected versions, the query cache only respects separate users, however this is not documented and not expected behavior. People relying on ClickHouse roles can have their access control lists bypassed if they are using query caching. Attackers who have control of a role could guess queries and see data they shouldn't have access to. Version 24.1 of ClickHouse and version 24.0.2.54535 of ClickHouse Cloud contain a patch for this issue. Based on the documentation, role based access control should be enforced regardless if query caching is enabled or not.",
+    "expected_severity": "low",
+    "expected_cwe_list": [
+      "CWE-863"
+    ],
+    "source": "https://api.first.org/data/v1/epss?cve=CVE-2024-22412"
+  },
+  {
+    "vulnerability_id": "VCID-141s-a8cn-wka8",
+    "cve": "CVE-2019-12452",
+    "summary": "Containous Traefik Exposes Password Hashes\ntypes/types.go in Containous Traefik 1.7.x through 1.7.11, when the `--api` flag is used and the API is publicly reachable and exposed without sufficient access control (which is contrary to the API documentation), allows remote authenticated users to discover password hashes by reading the Basic HTTP Authentication or Digest HTTP Authentication section, or discover a key by reading the ClientTLS section. These can be found in the JSON response to a `/api` request.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-522"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2019-12452"
+  },
+  {
+    "vulnerability_id": "VCID-1179-r6b2-1ud1",
+    "cve": "CVE-2024-10190",
+    "summary": "Horovod Vulnerable to Command Injection\nHorovod versions up to and including v0.28.1 are vulnerable to unauthenticated remote code execution. The vulnerability is due to improper handling of base64-encoded data in the `ElasticRendezvousHandler`, a subclass of `KVStoreHandler`. Specifically, the `_put_value` method in `ElasticRendezvousHandler` calls `codec.loads_base64(value)`, which eventually invokes `cloudpickle.loads(decoded)`. This allows an attacker to send a malicious pickle object via a PUT request, leading to arbitrary code execution on the server.",
+    "expected_severity": "critical",
+    "expected_cwe_list": [
+      "CWE-502",
+      "CWE-77"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2024-10190"
+  },
+  {
+    "vulnerability_id": "VCID-111e-b7ah-nucj",
+    "cve": "CVE-2023-23354",
+    "summary": "A cross-site scripting (XSS) vulnerability has been reported to affect several QNAP operating system versions. If exploited, the vulnerability could allow remote attackers who have gained user access to bypass security mechanisms or read application data.\n\nWe have already fixed the vulnerability in the following versions:\nQuLog Center 1.5.0.738 ( 2023/03/06 ) and later\nQuLog Center 1.4.1.691 ( 2023/03/01 ) and later\nQuLog Center 1.3.1.645 ( 2023/02/22 ) and later",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-79"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2023-23354"
+  },
+  {
+    "vulnerability_id": "VCID-111u-8dyk-aaas",
+    "cve": "CVE-2020-11165",
+    "summary": "Memory corruption due to buffer overflow while copying the message provided by HLOS into buffer without validating the length of buffer in Snapdragon Auto, Snapdragon Compute, Snapdragon Connectivity, Snapdragon Consumer IOT, Snapdragon Industrial IOT, Snapdragon Mobile, Snapdragon Wired Infrastructure and Networking",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-787"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2020-11165"
+  },
+  {
+    "vulnerability_id": "VCID-111u-e1ne-aaaq",
+    "cve": "CVE-2016-2282",
+    "summary": "Moxa ioLogik E2200 devices before 3.12 and ioAdmin Configuration Utility before 3.18 do not properly encrypt credentials, which makes it easier for remote attackers to obtain the associated cleartext via unspecified vectors.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-255"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2016-2282"
+  },
+  {
+    "vulnerability_id": "VCID-1121-h7qj-aaab",
+    "cve": "CVE-2020-24418",
+    "summary": "Adobe After Effects version 17.1.1 (and earlier) is affected by an out-of-bounds read vulnerability when parsing a crafted .aepx file, which could result in a read past the end of an allocated memory structure. An attacker could leverage this vulnerability to execute code in the context of the current user. This vulnerability requires user interaction to exploit.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-125"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2020-24418"
+  },
+  {
+    "vulnerability_id": "VCID-112h-ztww-aaad",
+    "cve": "CVE-2022-22166",
+    "summary": "An Improper Validation of Specified Quantity in Input vulnerability in the routing protocol daemon (rpd) of Juniper Networks Junos OS allows an unauthenticated networked attacker to cause an rdp crash and thereby a Denial of Service (DoS). If a BGP update message is received over an established BGP session where a BGP SR-TE policy tunnel attribute is malformed and BGP update tracing flag is enabled, the rpd will core. This issue can happen with any BGP session as long as the previous conditions are met. This issue can not propagate as the crash occurs as soon as the malformed update is received. This issue affects Juniper Networks Junos OS: 20.4 versions prior to 20.4R3-S1; 21.1 versions prior to 21.1R2-S2, 21.1R3. This issue does not affect Juniper Networks Junos OS versions prior to 20.4R1.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-1284"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2022-22166"
+  },
+  {
+    "vulnerability_id": "VCID-112b-57q4-aaac",
+    "cve": "CVE-2016-7657",
+    "summary": "An issue was discovered in certain Apple products. iOS before 10.2 is affected. macOS before 10.12.2 is affected. watchOS before 3.1.3 is affected. The issue involves the \"IOKit\" component. It allows attackers to obtain sensitive information from kernel memory via a crafted app.",
+    "expected_severity": "low",
+    "expected_cwe_list": [
+      "CWE-20"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2016-7657"
+  },
+  {
+    "vulnerability_id": "VCID-1131-23pd-aaac",
+    "cve": "CVE-2022-36035",
+    "summary": "Flux is a tool for keeping Kubernetes clusters in sync with sources of configuration (like Git repositories), and automating updates to configuration when there is new code to deploy. Flux CLI allows users to deploy Flux components into a Kubernetes cluster via command-line. The vulnerability allows other applications to replace the Flux deployment information with arbitrary content which is deployed into the target Kubernetes cluster instead. The vulnerability is due to the improper handling of user-supplied input, which results in a path traversal that can be controlled by the attacker. Users sharing the same shell between other applications and the Flux CLI commands could be affected by this vulnerability. In some scenarios no errors may be presented, which may cause end users not to realize that something is amiss. A safe workaround is to execute Flux CLI in ephemeral and isolated shell environments, which can ensure no persistent values exist from previous processes. However, upgrading to the latest version of the CLI is still the recommended mitigation strategy.",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-22"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2022-36035"
+  },
+  {
+    "vulnerability_id": "VCID-1146-smmz-aaah",
+    "cve": "CVE-2021-1625",
+    "summary": "A vulnerability in the Zone-Based Policy Firewall feature of Cisco IOS XE Software could allow an unauthenticated, remote attacker to prevent the Zone-Based Policy Firewall from correctly classifying traffic. This vulnerability exists because ICMP and UDP responder-to-initiator flows are not inspected when the Zone-Based Policy Firewall has either Unified Threat Defense (UTD) or Application Quality of Experience (AppQoE) configured. An attacker could exploit this vulnerability by attempting to send UDP or ICMP flows through the network. A successful exploit could allow the attacker to inject traffic through the Zone-Based Policy Firewall, resulting in traffic being dropped because it is incorrectly classified or in incorrect reporting figures being produced by high-speed logging (HSL).",
+    "expected_severity": "medium",
+    "expected_cwe_list": [
+      "CWE-284"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2021-1625"
+  },
+  {
+    "vulnerability_id": "VCID-1146-smmz-aaah",
+    "cve": "CVE-2021-1625",
+    "summary": "The WP Custom Cursors WordPress plugin before 3.2 does not properly sanitise and escape a parameter before using it in a SQL statement, leading to a SQL injection exploitable by users with a role as low as Admin.",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-89"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2023-2221"
+  },
+  {
+    "vulnerability_id": "VCID-111y-ch3k-aaas",
+    "cve": "CVE-2021-1913",
+    "summary": "Possible integer overflow due to improper length check while updating grace period and count record in Snapdragon Auto, Snapdragon Compute, Snapdragon Connectivity, Snapdragon Industrial IOT, Snapdragon Mobile, Snapdragon Wired Infrastructure and Networking",
+    "expected_severity": "high",
+    "expected_cwe_list": [
+      "CWE-190"
+    ],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2021-1913"
+  }
+]
