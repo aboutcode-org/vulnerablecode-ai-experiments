@@ -166,7 +166,7 @@ class CWEFromSummaryParser(BaseParser):
     def __init__(self):
         super().__init__(PROMPT_CWE_FROM_SUMMARY, CWEList)
 
-    def get_cwes(self, summary: str) -> List[CWEList]:
+    def get_cwes(self, summary: str) -> List[str]:
         result = self.run_agent(f"**Vulnerability Description:**\n{summary}")
         return [cwe.string for cwe in result.output.cwes]
 
